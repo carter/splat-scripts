@@ -9,42 +9,39 @@ TOPOFILEDIR=splat-datafiles/sdf/
 # local hgt file archive
 HGTFILEDIR=splat-datafiles/hgtzip/
 
+if [ ! -x `which srtm2sdf` ]; then
+  echo "error: not found in path: srtm2sdf splat conversion utility"
+  exit 1
+fi
+
+if [ ! -x `which readlink` ]; then
+  echo "error: not found in path: readlink"
+  exit 1
+fi
+
+if [ ! -x `which wget` ]; then
+  echo "error: not found in path: wget"
+  exit 1
+fi
+
+if [ ! -x `which unzip` ]; then
+  echo "error: not found in path: unzip"
+  exit 1
+fi
+
+if [ ! -x `which bzip2` ]; then
+  echo "error: not found in path: bzip2"
+  exit 1
+fi
+
 echo "Please sign up for a NASA Earthdata account at: \nhttps://urs.earthdata.nasa.gov/users/new"
 read -p 'NASA Earthdata Username: ' NASA_USERNAME 
 read -sp 'NASA Earthdata Password: ' NASA_PASSWORD
-NASA_USERNAME="carterparks"
-NASA_PASSWORD="D5Jc794HV0ip"
 
 for PAGE in 1 2 3 4 5 6
 do
   INDEXURL="https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL3.003/2000.02.11/SRTMGL3_page_$PAGE.html"
-
   INDEXFILE=`mktemp`
-
-  if [ ! -x `which srtm2sdf` ]; then
-    echo "error: not found in path: srtm2sdf splat conversion utility"
-    exit 1
-  fi
-
-  if [ ! -x `which readlink` ]; then
-    echo "error: not found in path: readlink"
-    exit 1
-  fi
-
-  if [ ! -x `which wget` ]; then
-    echo "error: not found in path: wget"
-    exit 1
-  fi
-
-  if [ ! -x `which unzip` ]; then
-    echo "error: not found in path: unzip"
-    exit 1
-  fi
-
-  if [ ! -x `which bzip2` ]; then
-    echo "error: not found in path: bzip2"
-    exit 1
-  fi
 
   echo "getting index.."
   wget -q -O - $INDEXURL | \
@@ -63,7 +60,6 @@ do
 done
 
 # to minimize disk space required, run srtm2sdf on each file as it is unzipped.
-
 HGTREALPATH=`readlink -f $HGTFILEDIR`
 TOPOREALPATH=`readlink -f $TOPOFILEDIR`
 PWD=`pwd`
